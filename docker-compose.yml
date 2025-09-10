@@ -1,0 +1,64 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres-container
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin1234
+      POSTGRES_DB: bootcamp_db
+      PGDATA: /var/lib/postgresql/data/pgdata
+    networks:
+      - bootcamp-network
+    ports:
+      - "5432:5432"
+    volumes:
+      - "./pgdata:/var/lib/postgresql/data/pgdata"
+
+  redis:
+    image: redis:7
+    container_name: redis-container
+    networks:
+      - bootcamp-network
+    ports:
+      - "6379:6379"
+    volumes:
+      - "./redis_data:/data"
+
+  data-provider-app:
+    image: project-data-provider:0.0.1
+    container_name: data-provider-app
+    networks:
+      - bootcamp-network
+    ports:
+      - "8081:8081"
+    depends_on:
+      - postgres
+      - redis
+
+  stock-data-app:
+    image: project-stock-data:0.0.1
+    container_name: stock-data-app
+    networks:
+      - bootcamp-network
+    ports:
+      - "8082:8082"
+    depends_on:
+      - postgres
+      - redis
+
+  heatmap-ui-app:
+    image: project-heatmap-ui:0.0.1
+    container_name: heatmap-ui-app
+    networks:
+      - bootcamp-network
+    ports:
+      - "8080:8080"
+    depends_on:
+      - stock-data-app
+
+networks:
+  bootcamp-network:
+    driver: bridge
+
+volumes:
+  redis_data:

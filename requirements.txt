@@ -1,0 +1,7 @@
+jupyterlab
+numpy
+pandas
+sqlalchemy
+psycopg2-binary
+finnhub-python  # 新增，用於 OHLCV 載入
+
