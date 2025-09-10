@@ -5,14 +5,19 @@ __pycache__/
 *.egg-info/
 dist/
 build/
+
 # Virtual environments
 bootcamp-env/
+
 # Jupyter Notebook checkpoints
 .ipynb_checkpoints/
+
 # VS Code
 .vscode/
+
 # Maven
 target/
+
 # Docker
 pgdata/
 redis_data/
