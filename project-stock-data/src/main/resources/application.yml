@@ -10,10 +10,14 @@ spring:
     url: "jdbc:postgresql://localhost:5432/SNP500"
     username: "postgres"
     password: "admin1234"
-    driver-class-name: "org.postgresql.Driver"
+    driver-class-name: "org.postgresql.Driver" # 明確指定驅動類
   jpa:
+    properties:
+      jakarta.persistence.jdbc.url: "jdbc:postgresql://localhost:5432/SNP500" # 顯式設定 URL
+      hibernate.dialect: "org.hibernate.dialect.PostgreSQLDialect" # 設定 PostgreSQL 方言
+    hibernate:
+      ddl-auto: update
     show-sql: true
-    hibernate.ddl-auto: update
   data:
     redis:
       host: "redis-container"
