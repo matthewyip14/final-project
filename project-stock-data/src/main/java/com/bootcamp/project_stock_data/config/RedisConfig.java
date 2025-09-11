@@ -5,6 +5,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.web.client.RestTemplate;
+
 import com.bootcamp.project_stock_data.model.dto.CompanyDTO;
 
 @Configuration
@@ -15,5 +17,10 @@ public class RedisConfig {
     template.setConnectionFactory(factory);
     template.setDefaultSerializer(new Jackson2JsonRedisSerializer<>(CompanyDTO.class));
     return template;
+  }
+
+  @Bean
+  public RestTemplate restTemplate() {
+    return new RestTemplate();
   }
 }

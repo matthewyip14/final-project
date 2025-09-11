@@ -22,19 +22,19 @@ import java.util.stream.Collectors;
 @Service
 public class StockService {
     @Autowired
-    private  RestTemplate restTemplate;
+    private RestTemplate restTemplate;
 
     @Autowired
-    private  StockRepository stockRepository;
+    private StockRepository stockRepository;
 
     @Autowired
-    private  CompanyRepository companyRepository;
+    private CompanyRepository companyRepository;
 
     @Autowired
-    private  StockOhlcRepository stockOhlcRepository;
+    private StockOhlcRepository stockOhlcRepository;
 
     @Autowired
-    private  RedisTemplate<String, CompanyDTO> redisTemplate;
+    private RedisTemplate<String, CompanyDTO> redisTemplate;
 
     @Value("${data.provider.url}")
     private String dataProviderUrl;
