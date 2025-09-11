@@ -1,4 +1,4 @@
-package com.bootcamp.project_data_provider.dto;
+package com.bootcamp.project_data_provider.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
