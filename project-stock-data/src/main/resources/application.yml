@@ -1,13 +1,26 @@
 server:
-  port: 8081
+  port: 8082
 finnhub:
   api:
-    key: d312t59r01qnu2r09ktgd312t59r01qnu2r09ku0  # 從 Finnhub 註冊取得
+    key: "d312t59r01qnu2r09ktgd312t59r01qnu2r09ku0"  # 從 Finnhub 註冊取得
 
 # PostgreSQL datasource configuration
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/SNP500
-    username: postgres
-    password: admin1234
-    driver-class-name: org.postgresql.Driver
+    url: "jdbc:postgresql://localhost:5432/SNP500"
+    username: "postgres"
+    password: "admin1234"
+    driver-class-name: "org.postgresql.Driver"
+  jpa:
+    show-sql: true
+    hibernate.ddl-auto: update
+  data:
+    redis:
+      host: "redis-container"
+      port: 6379
+      database: 0
+      timeout: 2000
+
+data:
+  provider:
+    url: "http://localhost:8081"
