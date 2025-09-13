@@ -25,81 +25,99 @@ import com.bootcamp.project_stock_data.service.StockService;
 
 @Service
 public class StockServiceImpl implements StockService {
-  @Autowired
-  private RestTemplate restTemplate;
 
-  @Autowired
-  private RedisTemplate<String, Object> redisTemplate;
+    private static final Logger logger = LoggerFactory.getLogger(StockServiceImpl.class);
 
-  @Autowired
-  private StockRepository stockRepository;
+    @Autowired
+    private RestTemplate restTemplate;
 
-  @Autowired
-  private StockProfileRepository stockProfileRepository;
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
 
-  @Autowired
-  private StockOhlcRepository stockOhlcRepository;
+    @Autowired
+    private StockRepository stockRepository;
 
-  @Value("${project.data.provider.url}")
-  private String dataProviderUrl;
+    @Autowired
+    private StockProfileRepository stockProfileRepository;
 
-  private static final Duration COMPANY_TTL = Duration.ofDays(1);
+    @Autowired
+    private StockOhlcRepository stockOhlcRepository;
 
-  @Override
-  public List<String> getAllSymbols() {
-    return stockRepository.findAll()
-        .stream()
-        .map(stock -> stock.getSymbol())
-        .collect(Collectors.toList());
-  }
+    @Value("${project.data.provider.url}")
+    private String dataProviderUrl;
 
-  @Override
-  public List<Map<String, Object>> getAllQuotes() {
-    List<String> symbols = getAllSymbols();
-    List<Map<String, Object>> quotes = new ArrayList<>();
-    for (String symbol : symbols) {
-        try {
-            Map<String, Object> quote = this.restTemplate.getForObject(dataProviderUrl + "/quote/" + symbol, Map.class);
-            quote.put("symbol", symbol);
-            quotes.add(quote);
-        } catch (Exception e) {
-            // Log error, continue to next
-        }
+    private static final Duration COMPANY_TTL = Duration.ofDays(1);
+
+    private static final long API_DELAY_MS = 400; // 400ms delay for 150 calls/min limit (60s / 150 = 0.4s = 400ms)
+
+    @Override
+    public List<String> getAllSymbols() {
+        return stockRepository.findAll()
+            .stream()
+            .map(stock -> stock.getSymbol())
+            .collect(Collectors.toList());
     }
-    return quotes;
-  }
 
-  @Override
-  public List<Map<String, Object>> getAllCompanies() {
-      List<String> symbols = getAllSymbols();
-      List<Map<String, Object>> companies = new ArrayList<>();
-      for (String symbol : symbols) {
-          Map<String, Object> company = getCompanyData(symbol);
-          if (company != null) {
-              companies.add(company);
-          }
-      }
-      return companies;
-  }
-  
-  private Map<String, Object> getCompanyData(String symbol) {
-      String key = "company::" + symbol;
-      Object cached = redisTemplate.opsForValue().get(key);
-      if (cached != null) {
-        return (Map<String, Object>) cached;
-      }
+    @Override
+    public List<Map<String, Object>> getAllQuotes() {
+        List<String> symbols = getAllSymbols();
+        List<Map<String, Object>> quotes = new ArrayList<>();
+        for (String symbol : symbols) {
+            try {
+                Map<String, Object> quote = restTemplate
+                    .getForObject(dataProviderUrl + "/quote/" + symbol, Map.class);
+                quote.put("symbol", symbol);
+                quotes.add(quote);
+                Thread.sleep(API_DELAY_MS);
+            } catch (HttpClientErrorException e) {
+                logger.error("HTTP client error for symbol {}: {}", symbol, e.getStatusCode(), e);
+            } catch (HttpServerErrorException e) {
+                logger.error("HTTP server error for symbol {}: {}", symbol, e.getStatusCode(), e);
+            } catch (ResourceAccessException e) {
+                logger.error("Resource access error (timeout/network) for symbol: {}", symbol, e);
+            } catch (InterruptedException ie) {
+                Thread.currentThread().interrupt();
+                logger.error("Thread interrupted during rate limit delay for symbol: {}", symbol, ie);
+            } catch (Exception e) {
+                logger.error("Unexpected error fetching quote for symbol: {}", symbol, e);
+            }
+        }
+        return quotes;
+    }
 
-      // Read-through: fetch from data-provider and store
-      try {
-        Map<String, Object> company = this.restTemplate.getForObject(dataProviderUrl + "/company/" + symbol, Map.class);
-        if (company != null) {
-          // Save to DB if needed (daily refresh)
-          Optional<StockEntity> stockOpt = stockRepository.findBySymbol(symbol);
-          if (stockOpt.isPresent()) {
-              StockProfileEntity profile = stockProfileRepository.findByStockId(stockOpt.get().getId());
-              if (profile == null) {
-                  profile = new StockProfileEntity();
-                  profile.setStock(stockOpt.get());
+    @Override
+    public List<Map<String, Object>> getAllCompanies() {
+        List<String> symbols = getAllSymbols();
+        List<Map<String, Object>> companies = new ArrayList<>();
+        for (String symbol : symbols) {
+            Map<String, Object> company = getCompanyData(symbol);
+            if (company != null) {
+                companies.add(company);
+            }
+        }
+        return companies;
+    }
+
+    private Map<String, Object> getCompanyData(String symbol) {
+        String key = "company::" + symbol;
+        Object cached = redisTemplate.opsForValue().get(key);
+        if (cached != null) {
+            return (Map<String, Object>) cached;
+        }
+
+        // Read-through: fetch from data-provider and store
+        try {
+            Map<String, Object> company = this.restTemplate
+                .getForObject(dataProviderUrl + "/company/" + symbol, Map.class);
+            if (company != null) {
+            // Save to DB if needed (daily refresh)
+            Optional<StockEntity> stockOpt = stockRepository.findBySymbol(symbol);
+            if (stockOpt.isPresent()) {
+                StockProfileEntity profile = stockProfileRepository
+                    .findByStockId(stockOpt.get().getId());
+                if (profile == null) {
+                    profile = new StockProfileEntity();
+                    profile.setStock(stockOpt.get());
                 }
                 profile.setCompanyName((String) company.get("name"));
                 profile.setIndustry((String) company.get("finnhubIndustry"));
@@ -108,34 +126,50 @@ public class StockServiceImpl implements StockService {
                 profile.setSharesOutstanding((Long) company.get("shareOutstanding"));
                 profile.setLastUpdated(LocalDateTime.now());
                 stockProfileRepository.save(profile);
-            }
+                }
 
-            // Cache in Redis
-            redisTemplate.opsForValue().set(key, company, COMPANY_TTL);
-            company.put("symbol", symbol);
-            return company;
+                // Cache in Redis
+                redisTemplate.opsForValue().set(key, company, COMPANY_TTL);
+                company.put("symbol", symbol);
+                return company;
+            }
+        } catch (RedisConnectionFailureException e) {
+            logger.error("Redis connection failed for symbol: {}", symbol, e);
+        } catch (HttpClientErrorException e) {
+            logger.error("HTTP client error for company data {}: {}", symbol, e.getStatusCode(), e);
+        } catch (HttpServerErrorException e) {
+            logger.error("HTTP server error for company data {}: {}", symbol, e.getStatusCode(), e);
+        } catch (ResourceAccessException e) {
+            logger.error("Resource access error (timeout/network) for company data: {}", symbol, e);
+        } catch (InterruptedException ie) {
+            Thread.currentThread().interrupt();
+            logger.error("Thread interrupted during rate limit delay for company data: {}", symbol, ie);
+        } catch (Exception e) {
+            logger.error("Unexpected error fetching or caching company data for symbol: {}", symbol, e);
         }
-      } catch (Exception e) {
-          // Log error
-      }
-      return null;
-  }
+        return null;
+    }
 
     @Override
     public List<Map<String, Object>> getOhlcData(String symbol) {
-        Optional<StockEntity> stockOpt = stockRepository.findBySymbol(symbol);
-        if (stockOpt.isPresent()) {
-            List<StockOhlcEntity> ohlcList = stockOhlcRepository.findByStockIdOrderByDateAsc(stockOpt.get().getId());
-            return ohlcList.stream().map(ohlc -> {
-                Map<String, Object> map = new HashMap<>();
-                map.put("date", ohlc.getDate());
-                map.put("open", ohlc.getOpen());
-                map.put("high", ohlc.getHigh());
-                map.put("low", ohlc.getLow());
-                map.put("close", ohlc.getClose());
-                map.put("volume", ohlc.getVolume());
-                return map;
-            }).collect(Collectors.toList());
+        try {
+            Optional<StockEntity> stockOpt = stockRepository.findBySymbol(symbol);
+            if (stockOpt.isPresent()) {
+                List<StockOhlcEntity> ohlcList = stockOhlcRepository
+                    .findByStockIdOrderByDateAsc(stockOpt.get().getId());
+                return ohlcList.stream().map(ohlc -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("date", ohlc.getDate());
+                    map.put("open", ohlc.getOpen());
+                    map.put("high", ohlc.getHigh());
+                    map.put("low", ohlc.getLow());
+                    map.put("close", ohlc.getClose());
+                    map.put("volume", ohlc.getVolume());
+                    return map;
+                }).collect(Collectors.toList());
+            }
+        } catch (DataAccessException e) {
+            logger.error("Database access error fetching OHLC data for symbol: {}", symbol, e);
         }
         return Collections.emptyList();
     }

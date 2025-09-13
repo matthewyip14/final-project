@@ -20,6 +20,7 @@ final-project/
 │   │   │   │   ├── StockDataApplication.java
 │   │   │   │   ├── controller/StockDataController.java
 │   │   │   │   ├── service/StockService.java
+│   │   │   │   ├── service/impl/StockServiceImpl.java
 │   │   │   │   ├── repository/StockRepository.java
 │   │   │   │   ├── repository/StockProfileRepository.java
 │   │   │   │   ├── repository/StockOhlcRepository.java
@@ -37,7 +38,8 @@ final-project/
 │   │   │   │   ├── HeatmapUiApplication.java
 │   │   │   │   ├── controller/ViewController.java
 │   │   │   │   ├── controller/ApiController.java
-│   │   │   │   └── service/UiService.java
+│   │   │   │   ├── service/UiService.java
+│   │   │   │   └── service/impl/UiServiceImpl.java
 │   │   │   └── resources/
 │   │   │       ├── templates/index.html
 │   │   │       ├── static/js/heatmap.js
@@ -53,4 +55,5 @@ final-project/
 ├── python_env_setup.sh
 ├── docker_env_setup.sh
 ├── docker-compose.yml
-└── .gitignore
+├── .gitignore
+└── .README.md
