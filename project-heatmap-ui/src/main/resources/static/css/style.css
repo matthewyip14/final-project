@@ -1,0 +1,4 @@
+#heatmap { width: 100%; height: 600px; }
+#candlestick { width: 100%; height: 400px; }
+rect { stroke: black; }
+text { fill: white; font-size: 12px; }

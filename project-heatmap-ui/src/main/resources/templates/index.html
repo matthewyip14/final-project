@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>S&P 500 Heatmap</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script th:src="@{/js/heatmap.js}"></script>
+    <script th:src="@{/js/candlestick.js}"></script>
+</head>
+<body>
+    <div id="heatmap"></div>
+    <div id="candlestick" style="display:none;"></div>
+    <script>
+        refreshHeatmap();
+        setInterval(refreshHeatmap, 30000);
+    </script>
+</body>
+</html>
