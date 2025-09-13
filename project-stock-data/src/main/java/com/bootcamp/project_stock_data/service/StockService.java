@@ -36,7 +36,7 @@ public class StockService {
     @Autowired
     private RedisTemplate<String, CompanyDTO> redisTemplate;
 
-    @Value("${data.provider.url}")
+    @Value("${project-data-provider.url}")
     private String dataProviderUrl;
 
     // public StockService(StockRepository stockRepository, StockProfileRepository profileRepo, StockOhlcRepository ohlcRepo, RedisTemplate<String, CompanyResponse> redisTemplate) {

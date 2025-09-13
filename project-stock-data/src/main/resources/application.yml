@@ -25,6 +25,5 @@ spring:
       database: 0
       timeout: 2000
 
-data:
-  provider:
-    url: "http://localhost:8081"
+project-data-provider:
+  url: "http://localhost:8081"
