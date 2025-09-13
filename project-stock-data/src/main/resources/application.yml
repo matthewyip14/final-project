@@ -18,12 +18,11 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
-  data:
-    redis:
-      host: "redis-container"
-      port: 6379
-      database: 0
-      timeout: 2000
+  redis:
+    host: "redis-container"
+    port: 6379
+    database: 0
+    timeout: 2000
 
 project-data-provider:
   url: "http://localhost:8081"
