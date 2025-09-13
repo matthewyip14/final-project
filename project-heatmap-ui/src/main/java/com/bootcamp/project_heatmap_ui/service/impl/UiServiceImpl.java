@@ -19,11 +19,11 @@ import org.springframework.web.client.RestTemplate;
 import com.bootcamp.project_heatmap_ui.service.UiService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.bootcamp.project_stock_data.mapper.DataMapper;
+import com.bootcamp.project_stock_data.Exception.ExceptionHandler;
 
 @Service
 public class UiServiceImpl implements UiService {
-
-    private static final Logger logger = LoggerFactory.getLogger(UiServiceImpl.class);
 
     @Autowired
     private RestTemplate restTemplate;
@@ -35,18 +35,18 @@ public class UiServiceImpl implements UiService {
     public List<Map<String, Object>> getHeatmapData() {
         try {
             ResponseEntity<List<Map<String, Object>>> quotesResponse = restTemplate.exchange(
-                stockDataUrl + "/quotes",
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<List<Map<String, Object>>>() {}
+                    stockDataUrl + "/quotes",
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<List<Map<String, Object>>>() {}
             );
             List<Map<String, Object>> quotes = quotesResponse.getBody();
 
             ResponseEntity<List<Map<String, Object>>> companiesResponse = restTemplate.exchange(
-                stockDataUrl + "/companies",
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<List<Map<String, Object>>>() {}
+                    stockDataUrl + "/companies",
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<List<Map<String, Object>>>() {}
             );
             List<Map<String, Object>> companies = companiesResponse.getBody();
 
@@ -58,32 +58,15 @@ public class UiServiceImpl implements UiService {
                 String symbol = (String) quote.get("symbol");
                 Map<String, Object> company = companyMap.get(symbol);
                 if (company != null) {
-                    Map<String, Object> dto = new HashMap<>();
-                    dto.put("symbol", symbol);
-                    dto.put("name", company.get("name"));
-                    dto.put("price", quote.get("c"));
-                    dto.put("change", quote.get("d"));
-                    dto.put("dp", quote.get("dp"));
-                    dto.put("marketCap", company.get("marketCapitalization"));
-                    dto.put("industry", company.get("finnhubIndustry"));
-                    dto.put("logo", company.get("logo"));
-                    dto.put("sharesOutstanding", company.get("shareOutstanding"));
-                    mergedData.add(dto);
+                    Map<String, Object> dto = DataMapper.buildHeatmapDto(symbol, company, quote);
+                    if (dto != null) {
+                        mergedData.add(dto);
+                    }
                 }
             }
             return mergedData;
-        } catch (HttpClientErrorException e) {
-            logger.error("HTTP client error fetching heatmap data: {}", e.getStatusCode(), e);
-            return Collections.emptyList();
-        } catch (HttpServerErrorException e) {
-            logger.error("HTTP server error fetching heatmap data: {}", e.getStatusCode(), e);
-            return Collections.emptyList();
-        } catch (ResourceAccessException e) {
-            logger.error("Resource access error (timeout/network) fetching heatmap data: {}", e.getMessage(), e);
-            return Collections.emptyList();
         } catch (Exception e) {
-            logger.error("Unexpected error fetching heatmap data: {}", e.getMessage(), e);
-            return Collections.emptyList();
+            return ExceptionHandler.handleRestException("fetching heatmap data", null, e) ? Collections.emptyList() : null;
         }
     }
 
@@ -97,18 +80,8 @@ public class UiServiceImpl implements UiService {
                     new ParameterizedTypeReference<List<Map<String, Object>>>() {}
             );
             return ohlcResponse.getBody();
-        } catch (HttpClientErrorException e) {
-            logger.error("HTTP client error fetching OHLC data for symbol {}: {}", symbol, e.getStatusCode(), e);
-            return Collections.emptyList();
-        } catch (HttpServerErrorException e) {
-            logger.error("HTTP server error fetching OHLC data for symbol {}: {}", symbol, e.getStatusCode(), e);
-            return Collections.emptyList();
-        } catch (ResourceAccessException e) {
-            logger.error("Resource access error (timeout/network) fetching OHLC data for symbol {}: {}", symbol, e.getMessage(), e);
-            return Collections.emptyList();
         } catch (Exception e) {
-            logger.error("Unexpected error fetching OHLC data for symbol {}: {}", symbol, e.getMessage(), e);
-            return Collections.emptyList();
+            return ExceptionHandler.handleRestException("fetching OHLC data", symbol, e) ? Collections.emptyList() : null;
         }
     }
 }
