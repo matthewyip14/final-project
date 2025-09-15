@@ -22,7 +22,7 @@ public class UiServiceImpl implements UiService {
     @Autowired
     private RestTemplate restTemplate;
 
-    @Value("${stock.data.url}")
+    @Value("${project.stock.data.url}")
     private String stockDataUrl;
 
     @Override
