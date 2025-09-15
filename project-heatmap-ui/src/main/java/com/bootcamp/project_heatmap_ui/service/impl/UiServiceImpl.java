@@ -2,7 +2,6 @@ package com.bootcamp.project_heatmap_ui.service.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -12,15 +11,10 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 import com.bootcamp.project_heatmap_ui.service.UiService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import com.bootcamp.project_stock_data.mapper.DataMapper;
-import com.bootcamp.project_stock_data.Exception.ExceptionHandler;
+import com.bootcamp.project_heatmap_ui.mapper.DataMapper;
+import com.bootcamp.project_heatmap_ui.exception.ExceptionHandler;
 
 @Service
 public class UiServiceImpl implements UiService {
