@@ -1,7 +1,16 @@
 server:
   port: 8080
-project-stock-provider:
+project:
+  stock:
+    provider:
     url: http://stock-data-app:8082
+
+# PostgreSQL datasource configuration
 spring:
   thymeleaf:
     cache: false
+  datasource:
+    url: jdbc:postgresql://localhost:5432/SNP500
+    username: postgres
+    password: admin1234
+    driver-class-name: org.postgresql.Driver
