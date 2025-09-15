@@ -89,14 +89,8 @@
    </dependency>
  </dependencies>
 
-		<!-- H2 Database Dependency -->
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-	<build>
-		<plugins>
+<build>
+        <plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>

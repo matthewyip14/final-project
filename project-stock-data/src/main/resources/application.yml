@@ -23,5 +23,12 @@ spring:
     database: 0
     timeout: 2000
 
-project-data-provider:
-  url: "http://localhost:8081"
+project:
+  data:
+    provider:
+      url: "http://localhost:8081"
+
+# SQL command to alter the table
+sql:
+  - "ALTER TABLE stocks ADD COLUMN id SERIAL PRIMARY KEY;"
+  - "ALTER TABLE stocks ADD PRIMARY KEY (symbol);"
