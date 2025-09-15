@@ -13,7 +13,6 @@ spring:
     driver-class-name: "org.postgresql.Driver" # 明確指定驅動類
   jpa:
     properties:
-      jakarta.persistence.jdbc.url: "jdbc:postgresql://localhost:5432/SNP500" # 顯式設定 URL
       hibernate.dialect: "org.hibernate.dialect.PostgreSQLDialect" # 設定 PostgreSQL 方言
     hibernate:
       ddl-auto: update
