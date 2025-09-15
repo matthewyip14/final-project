@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.bootcamp</groupId>
-	<artifactId>project-data-provider</artifactId>
+	<artifactId>project-stock-data</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>project-data-provider</name>
+	<name>project-stock-data</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>
