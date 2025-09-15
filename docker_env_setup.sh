@@ -1,10 +1,10 @@
 # Step 1: Stop all docker containers
-docker compose stop data-provider-app stock-data-app heatmap-ui-app
+docker compose stop project-data-provider project-stock-data project-heatmap-ui
 
 # Step 2: Remove old containers if any
-docker rm data-provider-app || true
-docker rm stock-data-app || true
-docker rm heatmap-ui-app || true
+docker rm project-data-provider || true
+docker rm project-stock-data || true
+docker rm project-heatmap-ui || true
 
 # Step 3: Maven install and docker build
 cd project-data-provider
