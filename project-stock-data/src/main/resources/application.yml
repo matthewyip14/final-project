@@ -7,16 +7,15 @@ finnhub:
 # PostgreSQL datasource configuration
 spring:
   datasource:
+    driver-class-name: "org.postgresql.Driver" # 明確指定驅動類
     url: "jdbc:postgresql://postgres-container:5432/SNP500"
     username: "postgres"
     password: "admin1234"
-    driver-class-name: "org.postgresql.Driver" # 明確指定驅動類
   jpa:
+    hibernate.ddl-auto: update
+    show-sql: true
     properties:
       hibernate.dialect: "org.hibernate.dialect.PostgreSQLDialect" # 設定 PostgreSQL 方言
-    hibernate:
-      ddl-auto: update
-    show-sql: true
   data:
     redis:
       host: "redis-container"

@@ -1,5 +1,6 @@
 server:
   port: 8081
+  
 finnhub:
   api:
     key: "d34odohr01qhorbf1eu0d34odohr01qhorbf1eug"  # 從 Finnhub 註冊取得
@@ -7,7 +8,7 @@ finnhub:
 # PostgreSQL datasource configuration
 spring:
   datasource:
+    driver-class-name: "org.postgresql.Driver"
     url: "jdbc:postgresql://postgres-container:5432/SNP500"
     username: "postgres"
     password: "admin1234"
-    driver-class-name: "org.postgresql.Driver"
