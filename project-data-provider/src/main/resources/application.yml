@@ -7,7 +7,7 @@ finnhub:
 # PostgreSQL datasource configuration
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/SNP500
+    url: jdbc:postgresql://postgres-container:5432/SNP500
     username: postgres
     password: admin1234
     driver-class-name: org.postgresql.Driver
