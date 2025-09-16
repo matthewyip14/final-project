@@ -2,7 +2,7 @@ server:
   port: 8081
 finnhub:
   api:
-    key: d312t59r01qnu2r09ktgd312t59r01qnu2r09ku0  # 從 Finnhub 註冊取得
+    key: d34odohr01qhorbf1eu0d34odohr01qhorbf1eug  # 從 Finnhub 註冊取得
 
 # PostgreSQL datasource configuration
 spring:

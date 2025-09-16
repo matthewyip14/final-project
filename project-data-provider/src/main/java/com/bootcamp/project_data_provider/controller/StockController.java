@@ -14,21 +14,21 @@ public class StockController {
   @Autowired
   private StockQuoteService stockQuoteService;
 
-  @GetMapping("/quote/{symbol}")
+  @GetMapping(value = "/quote/{symbol}")
   public QuoteDTO getQuote(@PathVariable String symbol) {
-      return stockQuoteService.getQuote(symbol);
+      return this.stockQuoteService.getQuote(symbol);
   }
 
-  @GetMapping("/company/{symbol}")
+  @GetMapping(value = "/company/{symbol}")
   public CompanyDTO getCompany(@PathVariable String symbol) {
-      return stockQuoteService.getCompanyProfile(symbol);
+      return this.stockQuoteService.getCompanyProfile(symbol);
   }
 
-  @GetMapping("/candles/{symbol}")
+  @GetMapping(value = "/candles/{symbol}")
   public CandlesDTO getCandles(@PathVariable String symbol) {
       // 假設從現在起過去1年
       long to = System.currentTimeMillis() / 1000;
       long from = to - 31536000;
-      return stockQuoteService.getCandles(symbol, "D", from, to);
+      return this.stockQuoteService.getCandles(symbol, "D", from, to);
   }
 }
