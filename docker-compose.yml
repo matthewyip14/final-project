@@ -12,7 +12,12 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - "./pgdata:/var/lib/postgresql/data/pgdata"
+      - "./pgdata:/var/lib/postgresql/data"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   redis:
     image: redis:7
@@ -26,7 +31,7 @@ services:
 
   data-provider-app:
     image: project-data-provider:0.0.1
-    container_name: data-provider-app
+    container_name: project-data-provider
     networks:
       - bootcamp-network
     ports:
@@ -37,24 +42,28 @@ services:
 
   stock-data-app:
     image: project-stock-data:0.0.1
-    container_name: stock-data-app
+    container_name: project-stock-data
     networks:
       - bootcamp-network
     ports:
       - "8082:8082"
     depends_on:
-      - postgres
-      - redis
+      postgres:
+        condition: service_healthy  # 等待 PostgreSQL 服務健康後再啟動
+      project-data-provider:
+        condition: service_started
+      redis:
+        condition: service_started
 
   heatmap-ui-app:
     image: project-heatmap-ui:0.0.1
-    container_name: heatmap-ui-app
+    container_name: project-heatmap-ui
     networks:
       - bootcamp-network
     ports:
       - "8080:8080"
     depends_on:
-      - stock-data-app
+      - project-stock-data
 
 networks:
   bootcamp-network:

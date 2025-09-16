@@ -9,6 +9,6 @@ finnhub:
 spring:
   datasource:
     driver-class-name: "org.postgresql.Driver"
-    url: "jdbc:postgresql://postgres-container:5432/SNP500"
+    url: "jdbc:postgresql://postgres:5432/SNP500"
     username: "postgres"
     password: "admin1234"
