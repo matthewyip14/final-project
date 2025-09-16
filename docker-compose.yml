@@ -29,7 +29,7 @@ services:
     volumes:
       - "./redis_data:/data"
 
-  data-provider-app:
+  project-data-provider:
     image: project-data-provider:0.0.1
     container_name: project-data-provider
     networks:
@@ -40,7 +40,7 @@ services:
       - postgres
       - redis
 
-  stock-data-app:
+  project-stock-data:
     image: project-stock-data:0.0.1
     container_name: project-stock-data
     networks:
@@ -55,7 +55,7 @@ services:
       redis:
         condition: service_started
 
-  heatmap-ui-app:
+  project-heatmap-ui:
     image: project-heatmap-ui:0.0.1
     container_name: project-heatmap-ui
     networks:
