@@ -2,6 +2,7 @@
 #candlestick { width: 100%; height: 400px; }
 rect { stroke: #000; stroke-width: 1.5px; }
 text { fill: #000; font-size: 12px; }
+.tile-label { fill: #fff; font-weight: 700; font-family: 'American Typewriter', Georgia, serif; }
 
 /* Center layout and dark navy background */
 body { background-color: #0a1a2b; margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; }

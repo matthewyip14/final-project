@@ -27,16 +27,20 @@ function refreshHeatmap() {
                 .on("click", d => showCandlestick(d.data.name));
 
             // Centered labels within each tile
+            const formatChange = d3.format("+.2f");
             svg.selectAll("text")
                 .data(treemap.leaves())
                 .enter().append("text")
+                .attr("class", "tile-label")
                 .attr("x", d => (d.x0 + d.x1) / 2)
                 .attr("y", d => (d.y0 + d.y1) / 2)
                 .attr("text-anchor", "middle")
                 .attr("dominant-baseline", "middle")
                 .attr("font-size", "12px")
-                .attr("fill", "#000")
-                .text(d => `${d.data.name} (${d.data.pc})`); // 顯示最後收盤價
+                .attr("font-weight", "700")
+                .attr("font-family", "American Typewriter, Georgia, serif")
+                .attr("fill", "#fff")
+                .text(d => `${d.data.name} (${formatChange(d.data.dp)}%)`); // 代號 + 漲跌百分比
 
             // 行業標籤（每個板塊左上角）
             svg.selectAll("titles")
