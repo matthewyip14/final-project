@@ -46,7 +46,7 @@ public class StockServiceImpl implements StockService {
     private String dataProviderUrl;
 
     private static final Duration COMPANY_TTL = Duration.ofDays(1);
-    private static final long API_DELAY_MS = 400; // 400ms delay for 150 calls/min limit (60s / 150 = 0.4s = 400ms)
+    private static final long API_DELAY_MS = 500; // 調整為 500ms (120 calls/min, 安全於 150/min)
 
     @Override
     public List<String> getAllSymbols() {
@@ -75,6 +75,7 @@ public class StockServiceImpl implements StockService {
                 ExceptionHandler.handleRestException("fetching quote", symbol, ie);
             }
         }
+        ExceptionHandler.logInfo("Fetched {} quotes", quotes.size()); // 使用封裝方法記錄 info
         return quotes;
     }
 
@@ -112,8 +113,11 @@ public class StockServiceImpl implements StockService {
                     DataMapper.updateAndSaveProfile(profile, company, stockProfileRepository);
                 }
 
+                // Cache in Redis
                 redisTemplate.opsForValue().set(key, company, COMPANY_TTL);
                 company.put("symbol", symbol);
+
+                // add delay after fetching to respect rate limits
                 Thread.sleep(API_DELAY_MS);
                 return company;
             }

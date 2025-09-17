@@ -7,6 +7,10 @@ function refreshHeatmap() {
             return response.json();
         })
         .then(data => {
+            if (!data || data.length === 0) {
+                d3.select("#heatmap").html("<p>No data available. Check logs or marker status</p>");
+                return;
+            }
             d3.select("#heatmap").html("");
             const width = 1000, height = 600;
             const svg = d3.select("#heatmap").append("svg").attr("width", width).attr("height", height);

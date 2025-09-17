@@ -15,6 +15,15 @@ public class ExceptionHandler {
   private static final Logger logger = LoggerFactory.getLogger(ExceptionHandler.class);
 
   /**
+   * 記錄 info 級別訊息
+   * @param message 訊息模板
+   * @param args 參數
+   */
+  public static void logInfo(String message, Object... args) {
+      logger.info(message, args);
+  }
+  
+  /**
    * 處理 RestTemplate 相關異常並記錄日誌
    * @param operation 描述操作的字串（如 "fetching quote"）
    * @param symbol 相關符號（如股票代碼）
