@@ -8,7 +8,10 @@
     <script th:src="@{/js/candlestick.js}"></script>
 </head>
 <body>
-    <div id="heatmap"></div>
+    <div class="page-container">
+        <h1 class="title">S&P 500 HeatMap</h1>
+        <div id="heatmap" class="heatmap-wrapper"></div>
+    </div>
     <div id="candlestick" style="display:none;"></div>
     <script>
         refreshHeatmap();

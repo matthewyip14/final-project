@@ -1,4 +1,10 @@
 #heatmap { width: 100%; height: 600px; }
 #candlestick { width: 100%; height: 400px; }
-rect { stroke: black; }
-text { fill: white; font-size: 12px; }
+rect { stroke: #000; stroke-width: 1.5px; }
+text { fill: #000; font-size: 12px; }
+
+/* Center layout and dark navy background */
+body { background-color: #0a1a2b; margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; }
+.page-container { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; min-height: 100vh; padding-top: 20px; }
+.title { color: #e6edf3; margin: 12px 0 16px; font-size: 24px; font-weight: 600; }
+.heatmap-wrapper { max-width: 1000px; width: 100%; }
