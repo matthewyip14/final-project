@@ -3,7 +3,7 @@ server:
   
 project-stock-data:
   base:
-    url: "http://localhost:8082"
+    url: "http://project-stock-data:8082"
 
 # PostgreSQL datasource configuration
 spring:

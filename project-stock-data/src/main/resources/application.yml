@@ -24,7 +24,7 @@ spring:
 
 project-data-provider:
   base:
-    url: "http://localhost:8081"
+    url: "http://project-data-provider:8081"
 
 # SQL command to alter the table
 sql:
