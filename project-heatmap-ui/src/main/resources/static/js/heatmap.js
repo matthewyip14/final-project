@@ -1,7 +1,9 @@
 function createColorScale() {
+    // RdYlGn inspired, clamped between -5% and +5%
     return d3.scaleLinear()
-        .domain([-5, -1, 0, 1, 5])
-        .range(["#8b0000", "#b22222", "#f0f0f0", "#228b22", "#006400"]);
+        .domain([-5, -2.5, 0, 2.5, 5])
+        .range(["#7f0000", "#d7301f", "#f7f7f7", "#1a9850", "#00441b"]) // deeper ends
+        .clamp(true);
 }
 
 function drawTiles(svg, leaves, color) {
@@ -75,6 +77,32 @@ function drawGroupTitles(svg, root) {
         .attr("stroke-width", 1.5);
 }
 
+function drawLegend(svg) {
+    const legendWidth = 200, legendHeight = 10;
+    const x = 780, y = 560; // bottom-right corner within 1000x600
+    const color = createColorScale();
+    const gradientId = "legend-gradient";
+
+    const defs = svg.append("defs");
+    const gradient = defs.append("linearGradient").attr("id", gradientId).attr("x1", "0%").attr("x2", "100%");
+    const stops = [-5, -2.5, 0, 2.5, 5];
+    gradient.selectAll("stop")
+        .data(stops)
+        .enter().append("stop")
+        .attr("offset", d => ((d + 5) / 10) * 100 + "%")
+        .attr("stop-color", d => color(d));
+
+    svg.append("rect")
+        .attr("x", x).attr("y", y)
+        .attr("width", legendWidth).attr("height", legendHeight)
+        .attr("fill", `url(#${gradientId})`).attr("stroke", "#333").attr("stroke-width", 0.5);
+
+    const scale = d3.scaleLinear().domain([-5, 5]).range([x, x + legendWidth]);
+    const axis = d3.axisBottom(scale).ticks(5).tickFormat(d => `${d}%`).tickSize(3);
+    svg.append("g").attr("transform", `translate(0, ${y + legendHeight})`).call(axis)
+        .selectAll("text").attr("fill", "#e6edf3");
+}
+
 function renderHeatmap(data) {
     if (!data.children || data.children.length === 0) {
         d3.select("#heatmap").html("<p>No data available. Check logs or market status.</p>");
@@ -90,6 +118,7 @@ function renderHeatmap(data) {
     drawTiles(svg, treemap.leaves(), color);
     drawLabels(svg, treemap.leaves());
     drawGroupTitles(svg, root);
+    drawLegend(svg);
 }
 
 function refreshHeatmap() {

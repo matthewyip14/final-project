@@ -50,9 +50,13 @@ public class HeatmapHierarchyBuilder {
 				sectorChildren.add(industryNode);
 			}
 
-			Map<String, Object> stock = new HashMap<>();
-			stock.put("name", symbol);
-			stock.put("value", company.get("marketCapitalization"));
+            Map<String, Object> stock = new HashMap<>();
+            stock.put("name", symbol);
+            Object marketCap = company.get("marketCapitalization");
+            if (!(marketCap instanceof Number)) {
+                marketCap = 1L; // fallback minimal size to remain visible
+            }
+            stock.put("value", marketCap);
 			stock.put("dp", quote.get("dp"));
 			stock.put("pc", quote.get("pc"));
 
