@@ -16,9 +16,9 @@ public class ApiController {
   private UiService uiService;
 
   @GetMapping("/heatmap")
-  public List<Map<String, Object>> getHeatmapData() {
-      return uiService.getHeatmapData(); // 合併 quote + company
-  }
+  public Map<String, Object> getHeatmapData() { // 改為 Map
+        return uiService.getHeatmapData();
+    }
 
   @GetMapping("/ohlc/{symbol}")
   public List<Map<String, Object>> getOhlcData(@PathVariable String symbol) {
