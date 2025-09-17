@@ -42,7 +42,7 @@ public class StockServiceImpl implements StockService {
     @Autowired
     private StockOhlcRepository stockOhlcRepository;
 
-    @Value("${project.data.provider.url}")
+    @Value("${project-data-provider.base.url}")
     private String dataProviderUrl;
 
     private static final Duration COMPANY_TTL = Duration.ofDays(1);
