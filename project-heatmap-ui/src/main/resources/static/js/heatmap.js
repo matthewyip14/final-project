@@ -30,17 +30,22 @@ function refreshHeatmap() {
             const formatChange = d3.format("+.2f");
             svg.selectAll("text")
                 .data(treemap.leaves())
-                .enter().append("text")
-                .attr("class", "tile-label")
-                .attr("x", d => (d.x0 + d.x1) / 2)
-                .attr("y", d => (d.y0 + d.y1) / 2)
+                .enter()
+                .append("g")
+                .attr("transform", d => `translate(${(d.x0 + d.x1) / 2}, ${(d.y0 + d.y1) / 2})`)
                 .attr("text-anchor", "middle")
                 .attr("dominant-baseline", "middle")
-                .attr("font-size", "12px")
-                .attr("font-weight", "700")
-                .attr("font-family", "American Typewriter, Georgia, serif")
-                .attr("fill", "#fff")
-                .text(d => `${d.data.name} (${formatChange(d.data.dp)}%)`); // 代號 + 漲跌百分比
+                .each(function(d) {
+                    const group = d3.select(this);
+                    group.append("text")
+                        .attr("class", "tile-label")
+                        .attr("y", -4)
+                        .text(d.data.name);
+                    group.append("text")
+                        .attr("class", "tile-label")
+                        .attr("y", 12)
+                        .text(`${formatChange(d.data.dp)}%`);
+                });
 
             // 行業標籤（每個板塊左上角）
             svg.selectAll("titles")
