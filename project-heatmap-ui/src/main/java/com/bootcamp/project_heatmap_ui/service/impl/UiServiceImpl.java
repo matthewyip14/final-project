@@ -60,7 +60,8 @@ public class UiServiceImpl implements UiService {
             }
             return mergedData;
         } catch (Exception e) {
-            return ExceptionHandler.handleRestException("fetching heatmap data", null, e) ? Collections.emptyList() : null;
+            ExceptionHandler.handleRestException("fetching heatmap data", null, e);
+            return Collections.emptyList();  // Always return [] for valid JSON
         }
     }
 

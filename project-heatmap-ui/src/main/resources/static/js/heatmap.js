@@ -1,13 +1,16 @@
 function refreshHeatmap() {
     fetch('/data/heatmap')
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
-            // 清空舊圖
             d3.select("#heatmap").html("");
-            // 使用 D3 treemap 繪製
             const width = 1000, height = 600;
             const svg = d3.select("#heatmap").append("svg").attr("width", width).attr("height", height);
-            const root = d3.hierarchy({children: data}).sum(d => d.market_cap);
+            const root = d3.hierarchy({children: data}).sum(d => d.marketCap);
             const treemap = d3.treemap().size([width, height])(root);
             const color = d3.scaleLinear().domain([-5, 0, 5]).range(["red", "white", "green"]);
 
@@ -27,5 +30,10 @@ function refreshHeatmap() {
                 .attr("x", d => d.x0 + 5)
                 .attr("y", d => d.y0 + 20)
                 .text(d => d.data.symbol);
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
+            // Optional: display error message on page
+            d3.select("#heatmap").html("<p>Error loading data: " + error.message + "</p>");
         });
 }
