@@ -26,8 +26,25 @@ function drawLabels(svg, leaves) {
         .attr("text-anchor", "middle")
         .attr("dominant-baseline", "middle");
 
-    groups.append("text").attr("class", "tile-label").attr("y", -4).text(d => d.data.name);
-    groups.append("text").attr("class", "tile-label").attr("y", 12).text(d => `${formatChange(d.data.dp)}%`);
+    groups.each(function(d) {
+        const group = d3.select(this);
+        const tileWidth = d.x1 - d.x0;
+        const tileHeight = d.y1 - d.y0;
+        const base = Math.min(tileWidth, tileHeight);
+        const symbolSize = Math.max(10, Math.min(22, base * 0.14));
+        const changeSize = Math.max(9, Math.min(18, base * 0.11));
+
+        group.append("text")
+            .attr("class", "tile-label")
+            .attr("y", -4)
+            .attr("font-size", symbolSize + "px")
+            .text(d.data.name);
+        group.append("text")
+            .attr("class", "tile-label")
+            .attr("y", 12)
+            .attr("font-size", changeSize + "px")
+            .text(`${formatChange(d.data.dp)}%`);
+    });
 }
 
 function drawGroupTitles(svg, root) {
