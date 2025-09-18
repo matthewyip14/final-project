@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>OHLC</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+  <div class="page-container">
+    <h1 class="title" id="title">Candlestick</h1>
+    <div id="candlestick"></div>
+  </div>
+  <script>
+    function draw(symbol){
+      fetch(`/data/ohlc/${symbol}`)
+        .then(r=>r.json())
+        .then(data=>{
+          document.getElementById('title').textContent = `${symbol} - Daily Candlestick`;
+          const width=900, height=420; const margin=40;
+          const svg=d3.select('#candlestick').append('svg').attr('width',width).attr('height',height);
+          const parseDate=d3.utcParse('%Y-%m-%dT%H:%M:%S.%LZ');
+          data.forEach(d=>{ d.date = new Date(d.date); });
+          const x=d3.scaleBand().domain(data.map(d=>d.date)).range([margin,width-margin]).padding(0.3);
+          const y=d3.scaleLinear().domain([d3.min(data,d=>d.low), d3.max(data,d=>d.high)]).nice().range([height-margin, margin]);
+          svg.append('g').attr('transform',`translate(0,${height-margin})`).call(d3.axisBottom(x).tickFormat(d3.timeFormat('%m-%d')).ticks(10));
+          svg.append('g').attr('transform',`translate(${margin},0)`).call(d3.axisLeft(y));
+          // wicks
+          svg.selectAll('line.wick').data(data).enter().append('line').attr('class','wick')
+            .attr('x1',d=>x(d.date)+x.bandwidth()/2).attr('x2',d=>x(d.date)+x.bandwidth()/2)
+            .attr('y1',d=>y(d.high)).attr('y2',d=>y(d.low)).attr('stroke','#999');
+          // bodies
+          svg.selectAll('rect.body').data(data).enter().append('rect').attr('class','body')
+            .attr('x',d=>x(d.date)).attr('y',d=>y(Math.max(d.open,d.close)))
+            .attr('width',x.bandwidth()).attr('height',d=>Math.max(1,Math.abs(y(d.open)-y(d.close))))
+            .attr('fill',d=> d.close>=d.open ? '#2e8b57' : '#b22222').attr('stroke','#222');
+        });
+    }
+    const symbol = new URLSearchParams(window.location.search).get('symbol') || window.location.pathname.split('/').pop();
+    draw(symbol);
+  </script>
+</body>
+</html>
