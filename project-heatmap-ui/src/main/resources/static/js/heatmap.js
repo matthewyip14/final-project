@@ -26,7 +26,9 @@ function drawLabels(svg, leaves) {
         .append("g")
         .attr("transform", d => `translate(${(d.x0 + d.x1) / 2}, ${(d.y0 + d.y1) / 2})`)
         .attr("text-anchor", "middle")
-        .attr("dominant-baseline", "middle");
+        .attr("dominant-baseline", "middle")
+        .style("cursor", "pointer")
+        .on("click", d => showCandlestick(d.data.name));
 
     groups.each(function(d) {
         const group = d3.select(this);
